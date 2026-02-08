@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGP-OAB - Modelo Oficial de Carteirinha</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Times New Roman', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .editor-container {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .form-panel {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .form-panel h3 {
+            color: #8B0000;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #8B0000;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #8B0000;
+        }
+        
+        .photo-controls {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .photo-upload {
+            margin-bottom: 15px;
+        }
+        
+        .photo-upload label {
+            display: block;
+            background: #8B0000;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.3s;
+        }
+        
+        .photo-upload label:hover {
+            background: #A52A2A;
+        }
+        
+        .photo-upload input[type="file"] {
+            display: none;
+        }
+        
+        .slider-group {
+            margin-bottom: 15px;
+        }
+        
+        .slider-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 5px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #8B0000;
+            cursor: pointer;
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #8B0000;
+            cursor: pointer;
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .card-wrapper {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .card-wrapper h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        /* CARTEIRINHA FRENTE */
+        .oab-card-front {
+            width: 340px;
+            height: 220px;
+            background: #FFF8F0;
+            border: 2px solid #8B0000;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        
+        .card-front-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(139, 0, 0, 0.1) 2px,
+                    rgba(139, 0, 0, 0.1) 4px
+                );
+            opacity: 0.3;
+        }
+        
+        .card-front-header {
+            position: relative;
+            z-index: 2;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 2px solid #8B0000;
+        }
+        
+        .card-front-title {
+            color: #8B0000;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .card-front-subtitle {
+            color: #333;
+            font-size: 0.6rem;
+            text-align: center;
+            margin-top: 2px;
+        }
+        
+        .card-front-id {
+            color: #333;
+            font-size: 0.6rem;
+            text-align: center;
+            margin-top: 2px;
+            font-weight: bold;
+        }
+        
+        .card-front-content {
+            position: relative;
+            z-index: 2;
+            padding: 15px;
+            display: flex;
+            height: calc(100% - 60px);
+        }
+        
+        .card-front-left {
+            flex: 1;
+            padding-right: 10px;
+        }
+        
+        .card-front-right {
+            width: 80px;
+            border-left: 1px solid #8B0000;
+            padding-left: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .card-field {
+            margin-bottom: 8px;
+            font-size: 0.65rem;
+        }
+        
+        .card-field-label {
+            color: #666;
+            font-size: 0.6rem;
+        }
+        
+        .card-field-value {
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .card-front-name {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .card-front-photo {
+            width: 70px;
+            height: 85px;
+            background: #f0f0f0;
+            border: 1px solid #8B0000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 0.5rem;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .card-front-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .card-front-logo {
+            width: 40px;
+            height: 40px;
+            background: #228B22;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.4rem;
+            font-weight: bold;
+        }
+        
+        .card-front-border {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 15px;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                #8B0000,
+                #8B0000 5px,
+                #FFF8F0 5px,
+                #FFF8F0 10px
+            );
+        }
+        
+        /* CARTEIRINHA VERSO */
+        .oab-card-back {
+            width: 340px;
+            height: 220px;
+            background: #FFF8F0;
+            border: 2px solid #8B0000;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        
+        .card-back-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(139, 0, 0, 0.1) 2px,
+                    rgba(139, 0, 0, 0.1) 4px
+                );
+            opacity: 0.3;
+        }
+        
+        .card-back-header {
+            position: relative;
+            z-index: 2;
+            background: #8B0000;
+            color: white;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.6rem;
+            font-weight: bold;
+        }
+        
+        .card-back-number {
+            position: absolute;
+            top: 8px;
+            right: 15px;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        .card-back-content {
+            position: relative;
+            z-index: 2;
+            padding: 15px;
+            display: flex;
+            height: calc(100% - 30px);
+        }
+        
+        .card-back-left {
+            width: 25px;
+            background: #8B0000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+        
+        .card-back-left-text {
+            color: white;
+            font-size: 0.4rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 5px 0;
+        }
+        
+        .card-back-main {
+            flex: 1;
+            padding: 0 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-back-photo {
+            width: 80px;
+            height: 100px;
+            background: #e0e0e0;
+            border: 1px solid #8B0000;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 0.5rem;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .card-back-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .card-back-logos {
+            position: absolute;
+            top: 40px;
+            right: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .card-back-logo {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.3rem;
+            font-weight: bold;
+        }
+        
+        .card-back-logo.brazil {
+            background: linear-gradient(45deg, #009739 50%, #FEDD00 50%);
+        }
+        
+        .card-back-logo.oab1 {
+            background: #8B0000;
+            color: white;
+        }
+        
+        .card-back-logo.oab2 {
+            background: #228B22;
+            color: white;
+        }
+        
+        .card-back-chip {
+            position: absolute;
+            top: 140px;
+            right: 15px;
+            width: 30px;
+            height: 25px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border: 1px solid #8B7355;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.4rem;
+            color: #8B7355;
+        }
+        
+        .card-back-signature {
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .card-back-signature-label {
+            font-size: 0.5rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .card-back-signature-line {
+            height: 20px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            font-style: italic;
+            font-size: 0.6rem;
+            color: #333;
+        }
+        
+        .card-back-observations {
+            margin-top: 10px;
+            font-size: 0.5rem;
+            color: #666;
+        }
+        
+        .card-back-barcode {
+            margin-top: auto;
+            height: 30px;
+            background: repeating-linear-gradient(
+                90deg,
+                #000 0px,
+                #000 2px,
+                #fff 2px,
+                #fff 4px,
+                #000 4px,
+                #000 6px,
+                #fff 6px,
+                #fff 8px,
+                #000 8px,
+                #000 10px,
+                #fff 10px,
+                #fff 12px,
+                #000 12px,
+                #000 14px,
+                #fff 14px,
+                #fff 16px
+            );
+        }
+        
+        .action-buttons {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            background: #8B0000;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #A52A2A;
+        }
+        
+        @media (max-width: 1200px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .header, .form-panel, .action-buttons {
+                display: none;
+            }
+            
+            .container {
+                max-width: none;
+                padding: 0;
+            }
+            
+            .cards-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+            
+            .card-wrapper {
+                background: none;
+                padding: 0;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SGP-OAB - Modelo Oficial</h1>
+            <p>Sistema de Geração de Carteirinha OAB Padrão Oficial</p>
+        </div>
+        
+        <div class="editor-container">
+            <div class="form-panel">
+                <h3>Dados Pessoais</h3>
+                
+                <div class="form-group">
+                    <label for="name">Nome Completo</label>
+                    <input type="text" id="name" placeholder="Tier Bauer" oninput="updateCards()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Telefone</label>
+                    <input type="text" id="phone" placeholder="9 68781307" oninput="updateCards()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="naturalidade">Naturalidade</label>
+                    <input type="text" id="naturalidade" placeholder="São Paulo - SP" oninput="updateCards()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="rg">RG</label>
+                    <input type="text" id="rg" placeholder="12429-SSPSP" oninput="updateCards()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="birthdate">Data de Nascimento</label>
+                    <input type="text" id="birthdate" placeholder="10/12/2006" oninput="updateCards()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cpe">CPE</label>
+                    <input type="text" id="cpe" placeholder="1.2429" oninput="updateCards()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="via">Via</label>
+                    <input type="text" id="via" placeholder="1" oninput="updateCards()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="expedido">Expedido em</label>
+                    <input type="text" id="expedido" placeholder="06/02/2026" oninput="updateCards()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="oab-number">Número OAB</label>
+                    <input type="text" id="oab-number" placeholder="72027.47" oninput="updateCards()">
+                </div>
+                
+                <div class="photo-controls">
+                    <div class="photo-upload">
+                        <label for="photo-upload">
+                            📷 Carregar Foto 3x4
+                        </label>
+                        <input type="file" id="photo-upload" accept="image/*" onchange="loadPhoto(event)">
+                    </div>
+                    
+                    <div class="slider-group">
+                        <label for="zoom">Zoom: <span id="zoom-value">100%</span></label>
+                        <input type="range" id="zoom" class="slider" min="50" max="150" value="100" oninput="adjustPhoto()">
+                    </div>
+                    
+                    <div class="slider-group">
+                        <label for="pos-x">Posição X: <span id="pos-x-value">0</span></label>
+                        <input type="range" id="pos-x" class="slider" min="-20" max="20" value="0" oninput="adjustPhoto()">
+                    </div>
+                    
+                    <div class="slider-group">
+                        <label for="pos-y">Posição Y: <span id="pos-y-value">0</span></label>
+                        <input type="range" id="pos-y" class="slider" min="-20" max="20" value="0" oninput="adjustPhoto()">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cards-container">
+                <div class="card-wrapper">
+                    <h3>Frente da Carteirinha</h3>
+                    <div class="oab-card-front">
+                        <div class="card-front-background"></div>
+                        <div class="card-front-header">
+                            <div class="card-front-title">ORDEM DOS ADVOGADOS DO BRASIL</div>
+                            <div class="card-front-subtitle">conselho seccional de São Paulo</div>
+                            <div class="card-front-id">IDENTIDADE DE ADVOGADO</div>
+                        </div>
+                        <div class="card-front-content">
+                            <div class="card-front-left">
+                                <div class="card-front-name" id="card-front-name">TIER BAUER</div>
+                                <div class="card-field">
+                                    <div class="card-field-label">TELEFONE</div>
+                                    <div class="card-field-value" id="card-phone">9 68781307</div>
+                                </div>
+                                <div class="card-field">
+                                    <div class="card-field-label">NATURALIDADE</div>
+                                    <div class="card-field-value" id="card-naturalidade">São Paulo - SP</div>
+                                </div>
+                                <div class="card-field">
+                                    <div class="card-field-label">RG</div>
+                                    <div class="card-field-value" id="card-rg">12429-SSPSP</div>
+                                </div>
+                                <div class="card-field">
+                                    <div class="card-field-label">DATA DE NASCIMENTO</div>
+                                    <div class="card-field-value" id="card-birthdate">10/12/2006</div>
+                                </div>
+                            </div>
+                            <div class="card-front-right">
+                                <div class="card-front-photo" id="card-front-photo">
+                                    <span>FOTO<br>3X4</span>
+                                </div>
+                                <div style="flex: 1;"></div>
+                                <div class="card-field">
+                                    <div class="card-field-label">CPE</div>
+                                    <div class="card-field-value" id="card-cpe">1.2429</div>
+                                </div>
+                                <div class="card-field">
+                                    <div class="card-field-label">VIA</div>
+                                    <div class="card-field-value" id="card-via">1</div>
+                                </div>
+                                <div class="card-field">
+                                    <div class="card-field-label">EXPEDIDO EM</div>
+                                    <div class="card-field-value" id="card-expedido">06/02/2026</div>
+                                </div>
+                                <div class="card-front-logo">OAB</div>
+                            </div>
+                        </div>
+                        <div class="card-front-border"></div>
+                    </div>
+                </div>
+                
+                <div class="card-wrapper">
+                    <h3>Verso da Carteirinha</h3>
+                    <div class="oab-card-back">
+                        <div class="card-back-background"></div>
+                        <div class="card-back-header">
+                            TEM FÉ PÚBLICA EM TODO O TERRITÓRIO NACIONAL
+                            <div class="card-back-number" id="card-back-number">72027.47</div>
+                        </div>
+                        <div class="card-back-content">
+                            <div class="card-back-left">
+                                <div class="card-back-left-text">
+                                    IDENTIDADE DE USO OBRIGATÓRIO EM CIRCUNSTÂNCIAS DOS FINS LEGAIS (Art. 13 da Lei nº 8.906/94)
+                                </div>
+                            </div>
+                            <div class="card-back-main">
+                                <div class="card-back-photo" id="card-back-photo">
+                                    <span>FOTO<br>3X4</span>
+                                </div>
+                                <div class="card-back-signature">
+                                    <div class="card-back-signature-label">ASSINATURA DO PORTADOR</div>
+                                    <div class="card-back-signature-line" id="card-signature">Tier Bauer</div>
+                                </div>
+                                <div class="card-back-observations">
+                                    <strong>OBSERVAÇÕES:</strong> _______________________________
+                                </div>
+                                <div class="card-back-barcode"></div>
+                            </div>
+                        </div>
+                        <div class="card-back-logos">
+                            <div class="card-back-logo brazil">🇧🇷</div>
+                            <div class="card-back-logo oab1">OAB</div>
+                            <div class="card-back-logo oab2">OAB</div>
+                        </div>
+                        <div class="card-back-chip">CHIP</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn" onclick="window.print()">🖨️ Imprimir Carteirinhas</button>
+            <button class="btn" onclick="downloadCards()">💾 Salvar como Imagem</button>
+        </div>
+    </div>
+    
+    <script>
+        let currentPhoto = null;
+        
+        function updateCards() {
+            // Update front card
+            document.getElementById('card-front-name').textContent = (document.getElementById('name').value || 'TIER BAUER').toUpperCase();
+            document.getElementById('card-phone').textContent = document.getElementById('phone').value || '9 68781307';
+            document.getElementById('card-naturalidade').textContent = document.getElementById('naturalidade').value || 'São Paulo - SP';
+            document.getElementById('card-rg').textContent = document.getElementById('rg').value || '12429-SSPSP';
+            document.getElementById('card-birthdate').textContent = document.getElementById('birthdate').value || '10/12/2006';
+            document.getElementById('card-cpe').textContent = document.getElementById('cpe').value || '1.2429';
+            document.getElementById('card-via').textContent = document.getElementById('via').value || '1';
+            document.getElementById('card-expedido').textContent = document.getElementById('expedido').value || '06/02/2026';
+            
+            // Update back card
+            document.getElementById('card-back-number').textContent = document.getElementById('oab-number').value || '72027.47';
+            document.getElementById('card-signature').textContent = document.getElementById('name').value || 'Tier Bauer';
+        }
+        
+        function loadPhoto(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentPhoto = e.target.result;
+                    
+                    // Update front photo
+                    const frontPhoto = document.getElementById('card-front-photo');
+                    frontPhoto.innerHTML = `<img src="${currentPhoto}" style="transform: scale(1) translate(0px, 0px);">`;
+                    
+                    // Update back photo
+                    const backPhoto = document.getElementById('card-back-photo');
+                    backPhoto.innerHTML = `<img src="${currentPhoto}" style="transform: scale(1) translate(0px, 0px);">`;
+                    
+                    adjustPhoto();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function adjustPhoto() {
+            if (!currentPhoto) return;
+            
+            const zoom = document.getElementById('zoom').value;
+            const posX = document.getElementById('pos-x').value;
+            const posY = document.getElementById('pos-y').value;
+            
+            document.getElementById('zoom-value').textContent = zoom + '%';
+            document.getElementById('pos-x-value').textContent = posX;
+            document.getElementById('pos-y-value').textContent = posY;
+            
+            const transform = `scale(${zoom/100}) translate(${posX}px, ${posY}px)`;
+            
+            // Apply to front photo
+            const frontImg = document.querySelector('#card-front-photo img');
+            if (frontImg) {
+                frontImg.style.transform = transform;
+                frontImg.style.transformOrigin = 'center';
+            }
+            
+            // Apply to back photo
+            const backImg = document.querySelector('#card-back-photo img');
+            if (backImg) {
+                backImg.style.transform = transform;
+                backImg.style.transformOrigin = 'center';
+            }
+        }
+        
+        function downloadCards() {
+            alert('Função de download em desenvolvimento. Use Ctrl+P para imprimir ou salvar como PDF.');
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCards();
+        });
+    </script>
+</body>
+</html>
